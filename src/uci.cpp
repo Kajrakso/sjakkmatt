@@ -1,0 +1,110 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#include "uci.hpp"
+#include "logging.hpp"
+#include "perft.hpp"
+#include "core/position.hpp"
+
+void uci_loop() {
+    std::string line;
+    Position    p = Position();
+    while (std::getline(std::cin, line))
+    {
+        std::string        cmd;
+        std::istringstream is(line);
+
+        if (is >> cmd)
+        {
+
+            if (cmd == "uci")
+            {
+                std::cout << "id name sjakkmatt" << "\n"
+                          << "id author Oskar Feed Jakobsen" << "\n"
+                          << "uciok" << "\n";
+            }
+            else if (cmd == "isready")
+            {
+                std::cout << "readyok" << "\n";
+            }
+            else if (cmd == "position")
+            {
+                // parse FEN and move list
+                std::string pos, is_moves, move;
+                std::string fen, position, color, castle, ep, hm, fm;
+
+                p = Position();
+                is >> pos;
+                if (pos == "fen")
+                {
+                    is >> position >> color >> castle >> ep >> hm >> fm;
+                    fen = position + " " + color + " " + castle + " " + ep + " " + hm + " " + fm;
+                    p   = Position(fen);
+                }
+                else if (pos != "startpos")
+                {
+                    continue;
+                }
+
+                is >> is_moves;
+                if (is_moves == "moves")
+                {
+                    while (is >> move)
+                    {
+                        // if the move is illegal (or
+                        // is not a move at all)
+                        // we should ignore it
+                        // and all the moves that follow
+                        Move m = p.alg_move_to_move(move);
+
+                        if (!p.is_legal(m))
+                        {
+                            break;
+                        }
+
+                        p.do_move(m);
+                    }
+                }
+
+                LOG(p)
+            }
+            else if (cmd == "ucinewgame")
+            {
+                LOG("not implemented yet\n")
+            }
+            else if (cmd == "go")
+            {
+                LOG("not implemented yet\n")
+
+                /* pick a random legal move and return it! */
+                // std::vector<Move> moves    = p.get_legal_moves();
+                // Move              bestmove = moves.at(rand() % moves.size());
+                // std::cout << "info depth 0 score cp 214 time 0 nps 1 nodes 0 pv "
+                //           << bestmove.to_str() << std::endl;
+                //
+                // std::cout << "bestmove " << bestmove.to_str() << std::endl;
+            }
+            else if (cmd == "stop")
+            {
+
+                // std::vector<Move> moves    = p.get_legal_moves();
+                // Move              bestmove = moves.at(rand() % moves.size());
+                // std::cout << "bestmove " << bestmove.to_str() << std::endl;
+
+                LOG("not implemented yet\n")
+            }
+            else if (cmd == "perft")
+            {
+                std::string depth;
+                is >> depth;
+                int d = stoi(depth);
+                do_perft(p, d);
+            }
+            else if (cmd == "quit")
+            {
+                break;
+            }
+        }
+    }
+}
