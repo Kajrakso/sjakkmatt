@@ -1,3 +1,9 @@
+#!/bin/python3
+
+# generates bitboards where
+# all squares that are under attack
+# by a certain piece is marked with 1.
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -34,6 +40,7 @@ def gen_bishop_moves():
         bitboards[pos] = bb
     return bitboards
 
+
 def gen_knight_moves():
     bitboards = np.zeros(64, dtype=np.uint64)
     for pos in range(64):
@@ -42,10 +49,11 @@ def gen_knight_moves():
         for delta in (-17, -15, -10, -6, 6, 10, 15, 17):
             i = pos + delta
             parity_i = (i // 8 + i % 8) % 2
-            if (0 <= i < 64 and parity_i != parity_pos):
+            if 0 <= i < 64 and parity_i != parity_pos:
                 bb += 2**i
         bitboards[pos] = bb
     return bitboards
+
 
 def gen_king_moves():
     bitboards = np.zeros(64, dtype=np.uint64)
@@ -55,19 +63,14 @@ def gen_king_moves():
         for delta in (-9, -8, -7, -1, 1, 7, 8, 9):
             i = pos + delta
             col_i = i % 8
-            if (0 <= i < 64 and (abs(col_i - col) <= 1)):
+            if 0 <= i < 64 and (abs(col_i - col) <= 1):
                 bb += 2**i
         bitboards[pos] = bb
     return bitboards
 
-def main():
+
+def print_bb(bb):
     board = np.zeros((8, 8), dtype=int)
-    bb_N = gen_king_moves()
-
-    print(bb_N)
-
-    bb = bb_N[10]
-
     for i in range(64):
         board[i // 8][i % 8] = (bb >> i) & 1
 
@@ -75,6 +78,13 @@ def main():
         for j in range(8):
             print(board[i][j], end=" ")
         print()
+
+
+def main():
+    print("king:\n", gen_king_moves())
+    print("knight:\n", gen_knight_moves())
+    print("bishop:\n", gen_bishop_moves())
+    print("rook:\n", gen_rook_moves())
 
 
 if __name__ == "__main__":
