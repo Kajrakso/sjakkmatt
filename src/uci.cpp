@@ -8,6 +8,8 @@
 #include "core/position.hpp"
 
 void uci_loop() {
+    srand(time(NULL));
+
     std::string line;
     Position    p = Position();
     while (std::getline(std::cin, line))
@@ -78,19 +80,19 @@ void uci_loop() {
                 LOG("not implemented yet\n")
 
                 /* pick a random legal move and return it! */
-                // std::vector<Move> moves    = p.get_legal_moves();
-                // Move              bestmove = moves.at(rand() % moves.size());
-                // std::cout << "info depth 0 score cp 214 time 0 nps 1 nodes 0 pv "
-                //           << bestmove.to_str() << std::endl;
-                //
-                // std::cout << "bestmove " << bestmove.to_str() << std::endl;
+                std::vector<Move> moves    = p.get_legal_moves();
+                Move              bestmove = moves.at(rand() % moves.size());
+                std::cout << "info depth 0 score cp 214 time 0 nps 1 nodes 0 pv "
+                          << bestmove.to_str() << std::endl;
+
+                std::cout << "bestmove " << bestmove.to_str() << std::endl;
             }
             else if (cmd == "stop")
             {
 
-                // std::vector<Move> moves    = p.get_legal_moves();
-                // Move              bestmove = moves.at(rand() % moves.size());
-                // std::cout << "bestmove " << bestmove.to_str() << std::endl;
+                std::vector<Move> moves    = p.get_legal_moves();
+                Move              bestmove = moves.at(rand() % moves.size());
+                std::cout << "bestmove " << bestmove.to_str() << std::endl;
 
                 LOG("not implemented yet\n")
             }
