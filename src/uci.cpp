@@ -97,9 +97,10 @@ void uci_loop() {
             else if (cmd == "perft")
             {
                 std::string depth;
-                is >> depth;
-                int d = stoi(depth);
-                do_perft(p, d);
+                if( is >> depth ){
+                    int d = stoi(depth);
+                    do_perft(p, d);
+                }
             }
             else if (cmd == "quit")
             {
