@@ -57,6 +57,7 @@ class Move {
     MoveInfo flags;
 };
 
+bool operator==(const Move m1, const Move m2);
 
 extern const Bitboard RookAttack[64];
 extern const Bitboard BishopAttack[64];

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <algorithm>
 
 #include "uci.hpp"
 #include "logging.hpp"
@@ -54,13 +55,14 @@ void uci_loop() {
                 {
                     while (is >> move)
                     {
-                        // if the move is illegal (or
-                        // is not a move at all)
-                        // we should ignore it
-                        // and all the moves that follow
-                        Move m = p.alg_move_to_move(move);
+                        /* if the move is illegal (or is not a move at all)
+                        we should ignore it and all the moves that follow */
 
-                        if (!p.is_legal(m))
+                        Move              m           = p.alg_move_to_move(move);
+                        std::vector<Move> legal_moves = p.get_legal_moves();
+
+                        auto it = std::find(legal_moves.begin(), legal_moves.end(), m);
+                        if (it == legal_moves.end())
                         {
                             break;
                         }
@@ -99,7 +101,8 @@ void uci_loop() {
             else if (cmd == "perft")
             {
                 std::string depth;
-                if( is >> depth ){
+                if (is >> depth)
+                {
                     int d = stoi(depth);
                     do_perft(p, d);
                 }

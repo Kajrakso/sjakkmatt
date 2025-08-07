@@ -105,6 +105,13 @@ const Bitboard KingAttack[64] = {
 };
 // clang-format on
 
+bool operator==(const Move m1, const Move m2){
+    return (
+        m1.from_square == m2.from_square &&
+        m1.to_square == m2.to_square
+    );
+}
+
 std::string Move::to_str() {
     std::string str = "";
     str += square_to_str_square(from_square);
@@ -731,12 +738,6 @@ bool Position::is_legal(Move move) const {
     const Color them = ~us;
 
     if (move.from_square == NO_SQUARE || move.to_square == NO_SQUARE) {
-        return false;
-    }
-
-    // hacky way to make sure that castling out of check is illegal
-    if (p.king_is_attacked(us) && (move.is_k_castle() || move.is_q_castle()))
-    {
         return false;
     }
 
