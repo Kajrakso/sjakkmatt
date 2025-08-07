@@ -8,6 +8,10 @@ CFLAGS_DEBUG = -g3 -fsanitize=address -fsanitize=undefined -fsanitize=leak
 SRC_DIR = src
 TEST_DIR = test
 
+# lichess bot
+LICHESS_BOT_DIR = lichess-bot
+LICHESS_BOT_SETUP_SCRIPT = lichess-bot-setup.sh
+
 SRCS = $(shell find $(SRC_DIR) -name '*.cpp' -and -not -name 'main.cpp')
 OBJS = $(patsubst %.cpp, %.o, $(SRCS))
 EXE = sjakkmatt
@@ -48,5 +52,15 @@ $(TEST_DIR)/%.o: $(TEST_DIR)/%.cpp
 clean:
 	rm -f $(OBJS) $(EXE) $(TEST_OBJ) $(TEST_EXE)
 
+# Setup the lichess bot
+lichess-bot: $(EXE)
+	if [ ! -d $(LICHESS_BOT_DIR) ]; then $(LICHESS_BOT_SETUP_SCRIPT); fi
+	cp -f $(EXE) $(LICHESS_BOT_DIR)/engines/$(EXE)
+	sed -i "s/name: \"engine_name\"/name: \"$(EXE)\"/" $(LICHESS_BOT_DIR)/config.yml
+
+# Run the lichess bot
+run-bot:
+	cd $(LICHESS_BOT_DIR) && source venv/bin/activate && python3 lichess-bot.py -u
+
 # Phony targets
-.PHONY: all debug test clean
+.PHONY: all debug test clean lichess-bot run-bot
