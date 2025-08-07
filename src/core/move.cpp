@@ -408,13 +408,13 @@ Move Position::alg_move_to_move(std::string m_alg) {
     if (Piece_to_PieceType(piece_at_from_square) == KING)
     {
         // queen side
-        if (abs(file(to) - file(from)) == 3)
+        if (file(to) - file(from) == -2)
         {
             flags |= (SPECIAL_FLAG_0 | SPECIAL_FLAG_1);
         }
 
         // king side
-        if (abs(file(to) - file(from)) == 2)
+        if (file(to) - file(from) == 2)
         {
             flags |= SPECIAL_FLAG_1;
         }
@@ -728,8 +728,15 @@ std::vector<Move> Position::get_pseudo_legal_moves() const {
 bool Position::is_legal(Move move) const {
     Position    p  = *this;  // copying the current position
     const Color us = st.side_to_move;
+    const Color them = ~us;
 
     if (move.from_square == NO_SQUARE || move.to_square == NO_SQUARE) {
+        return false;
+    }
+
+    // hacky way to make sure that castling out of check is illegal
+    if (p.king_is_attacked(us) && (move.is_k_castle() || move.is_q_castle()))
+    {
         return false;
     }
 
