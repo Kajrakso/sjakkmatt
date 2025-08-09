@@ -11,6 +11,8 @@ class Board {
    public:
     std::array<Bitboard, 12> board;
 
+    friend bool operator==(const Board& b1, const Board& b2);
+
    private:
 };
 

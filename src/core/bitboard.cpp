@@ -31,4 +31,12 @@ Bitboard Position::get_occupied_bitboard(Color c) const {
     return b;
 }
 
-
+bool operator==(const Board& b1, const Board& b2) {
+    for (int i = 0; i < 12; i++)
+    {
+        if (b1.board.at(i) != b2.board.at(i)){
+            return false;
+        }
+    }
+    return true;
+}

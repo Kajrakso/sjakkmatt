@@ -15,7 +15,7 @@ Position::Position(const Position& p) {
     if (this != &p) {
         this->board   = p.board;
         this->st      = p.st;
-        this->prev_st = p.prev_st;
+        this->history = p.history;
     }
 }
 
@@ -23,7 +23,7 @@ Position& Position::operator=(const Position& p) {
     if (this != &p) {
         this->board   = p.board;
         this->st      = p.st;
-        this->prev_st = p.prev_st;
+        this->history = p.history;
     }
     return *this;
 }
@@ -65,6 +65,37 @@ bool Position::is_allowed_to_000() const {
 bool Position::king_is_attacked(Color c) const {
     return (board.board.at(PieceType_to_Piece(KING, c)) & get_controlled_squares(~c)) != 0;
 }
+
+
+bool Position::has_queen(Color c) const {
+    if (c == Color::WHITE){
+        return board.board.at(W_QUEEN) != Bitboard(0);
+    }
+    else if (c == Color::BLACK) {
+        return board.board.at(B_QUEEN) != Bitboard(0);
+    }
+
+    return false;
+}
+
+int Position::number_of_pieces(Color c) const {
+    if (c != Color::NO_COLOR) {
+        Bitboard bb = get_occupied_bitboard(c); 
+        return __builtin_popcountll(bb);
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
 
 Square str_square_to_square(std::string sq) {
     int file = sq.at(0) - 'a';
@@ -201,4 +232,18 @@ std::ostream& operator<<(std::ostream& os, const Position& p) {
     return os;
 }
 
+bool operator==(const StateInfo& st1, const StateInfo& st2){
+    return (
+        st1.captured_piece == st2.captured_piece &&
+        st1.castling_availability == st2.castling_availability &&
+        st1.en_passant_target_square == st2.en_passant_target_square &&
+        st1.captured_piece == st2.captured_piece &&
+        st1.fullmove_number == st2.fullmove_number &&
+        st1.halfmove_clock == st2.halfmove_clock &&
+        st1.side_to_move == st2.side_to_move
+    );
+}
 
+bool operator==(const Position& p1, const Position& p2){
+    return (p1.board == p2.board && p1.st == p2.st && p1.history == p2.history);
+}

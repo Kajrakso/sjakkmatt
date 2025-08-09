@@ -57,6 +57,7 @@ class Move {
     MoveInfo flags;
 };
 
+/* two moves are equal if they have the same start and end squares. */
 bool operator==(const Move m1, const Move m2);
 
 extern const Bitboard RookAttack[64];

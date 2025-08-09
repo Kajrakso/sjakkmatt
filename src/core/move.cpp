@@ -189,7 +189,9 @@ PieceType Move::promotion_piecetype() const {
 
 /* the move is assumed to be legal */
 void Position::do_move(Move m) {
-    prev_st = st;
+    history.push(st);
+
+    // prev_st = st;
 
     Piece p                     = piece_at_pos(m.from_square);
     Piece p_to                  = piece_at_pos(m.to_square);
@@ -295,6 +297,9 @@ void Position::do_move(Move m) {
 }
 
 void Position::undo_move(Move m) {
+    if (history.empty()){
+        return;
+    }
     // see https://github.com/official-stockfish/Stockfish/blob/master/src/position.cpp#L913
 
     // check promotion
@@ -353,7 +358,8 @@ void Position::undo_move(Move m) {
     }
 
     // reset StateInfo
-    st = prev_st;
+    st = history.top();
+    history.pop();
 }
 
 
@@ -431,9 +437,10 @@ Move Position::alg_move_to_move(std::string m_alg) {
 }
 
 
+static std::pair<int, int> directions_straight[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+static std::pair<int, int> directions_diagonal[4] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+
 Bitboard get_attacking_squares_sliding(Square sq, Bitboard occupied_sqs, bool diagonal) {
-    std::pair<int, int> directions_straight[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-    std::pair<int, int> directions_diagonal[4] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 
     Bitboard bb(0);
     int      row = sq / 8;
@@ -735,7 +742,6 @@ std::vector<Move> Position::get_pseudo_legal_moves() const {
 bool Position::is_legal(Move move) const {
     Position    p  = *this;  // copying the current position
     const Color us = st.side_to_move;
-    const Color them = ~us;
 
     if (move.from_square == NO_SQUARE || move.to_square == NO_SQUARE) {
         return false;

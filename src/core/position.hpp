@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <iostream>
 #include <vector>
+#include <stack>
+
 
 #include "bitboard.hpp"
 #include "move.hpp"
@@ -40,14 +42,24 @@ class Position {
 
     bool                 import_FEN(std::string FEN);
     StateInfo            state() const { return st; };
-    StateInfo            prev_state() const { return prev_st; };
     std::string          to_string() const;
     friend std::ostream& operator<<(std::ostream& os, const Position& p);
+    friend bool operator==(const Position& p1, const Position& p2);
+
+    bool is_allowed_to_00() const;
+    bool is_allowed_to_000() const;
+    bool king_is_attacked(Color c) const;
+    bool has_queen(Color c) const;
+    int number_of_pieces(Color c) const;
+
+
+    // testing history
+    // This stores the sequence of prior states
+    std::stack<StateInfo> history;
 
    private:
     Board     board;
     StateInfo st;
-    StateInfo prev_st;
 
     Piece             piece_at_pos(int j) const;
     void              remove_piece(Piece pi, Square sq);
@@ -60,10 +72,8 @@ class Position {
     Bitboard          get_controlled_squares(Color c) const;
     Bitboard          get_occupied_bitboard() const;
     Bitboard          get_occupied_bitboard(Color c) const;
-    bool              is_allowed_to_00() const;
-    bool              is_allowed_to_000() const;
-    bool              king_is_attacked(Color c) const;
 };
+
 
 
 Square      str_square_to_square(std::string sq);
