@@ -4,12 +4,13 @@
 #include <algorithm>
 
 #include "uci.hpp"
+#include "engine.hpp"
 #include "logging.hpp"
 #include "perft.hpp"
 #include "core/position.hpp"
 
 void uci_loop() {
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
 
     std::string line;
     Position    p = Position();
@@ -79,24 +80,12 @@ void uci_loop() {
             }
             else if (cmd == "go")
             {
-                LOG("not implemented yet\n")
-
-                /* pick a random legal move and return it! */
-                std::vector<Move> moves    = p.get_legal_moves();
-                Move              bestmove = moves.at(rand() % moves.size());
-                std::cout << "info depth 0 score cp 214 time 0 nps 1 nodes 0 pv "
-                          << bestmove.to_str() << std::endl;
-
-                std::cout << "bestmove " << bestmove.to_str() << std::endl;
+                stop_thinking();
+                start_thinking(p);
             }
             else if (cmd == "stop")
             {
-
-                std::vector<Move> moves    = p.get_legal_moves();
-                Move              bestmove = moves.at(rand() % moves.size());
-                std::cout << "bestmove " << bestmove.to_str() << std::endl;
-
-                LOG("not implemented yet\n")
+                stop_thinking();
             }
             else if (cmd == "perft")
             {
@@ -109,6 +98,7 @@ void uci_loop() {
             }
             else if (cmd == "quit")
             {
+                stop_thinking();
                 break;
             }
         }
