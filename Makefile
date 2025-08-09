@@ -1,7 +1,7 @@
 # Compiler and standard flags
 CC = g++
 CFLAGS_COMMON = -std=c++23 -Wall -Wextra -Wconversion -Wno-unused-parameter -Wno-unused-function
-CFLAGS_OPTIMIZED = -O3
+CFLAGS_OPTIMIZED = -O2
 CFLAGS_DEBUG = -g3 -fsanitize=address -fsanitize=undefined -fsanitize=leak
 
 # Directories
@@ -29,7 +29,7 @@ debug: CFLAGS = $(CFLAGS_COMMON) $(CFLAGS_DEBUG)
 debug: $(EXE)
 
 # Test target
-test: CFLAGS = $(CFLAGS_COMMON) $(CFLAGS_DEBUG)
+test: CFLAGS = $(CFLAGS_COMMON)
 test: $(TEST_EXE)
 
 # Compile the executable
